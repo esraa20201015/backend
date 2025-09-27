@@ -1,0 +1,193 @@
+### AUTHENTICATION
+# Sign Up a New User
+POST http://localhost:4002/auth/sign-up
+Content-Type: application/json
+
+{
+  "fullName": "John Doe",
+  "email": "john.doe@example.com",
+  "password": "Password123!"
+}
+
+
+
+
+# Sign in (Admin / Recruiter / Candidate)
+POST http://localhost:4002/auth/sign-in
+Content-Type: application/json
+
+{
+    "email": "john.doe@example.com",
+  "password": "Password123!"
+  
+}
+GET http://localhost:4002/user
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE2LCJlbWFpbCI6ImpvaG4uZG9lQGV4YW1wbGUuY29tIiwiaWF0IjoxNzU3MzMyNTUzLCJleHAiOjE3NTczMzYxNTMsImF1ZCI6ImxvY2FsaG9zdDo0MDAyIiwiaXNzIjoibG9jYWxob3N0OjQwMDIifQ.-1YcwLoCTHCUQepot5xsh92EPywQaxboUQ8GRGjzNko
+
+
+# Refresh token
+POST http://localhost:4002/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "your_refresh_token_here"
+}
+
+# Logout
+POST http://localhost:4002/auth/sign-out
+Authorization: Bearer your_access_token_here
+
+---
+
+### ==========================
+### ADMIN MODULE
+### ==========================
+
+# Create Category
+POST http://localhost:4002/category
+Authorization: Bearer your_admin_token
+Content-Type: application/json
+
+{
+  "name": "Organization Type"
+}
+
+# Get all Categories
+GET http://localhost:3000/category
+Authorization: Bearer your_admin_token
+
+# Create Company
+POST http://localhost:3000/company
+Authorization: Bearer your_admin_token
+Content-Type: application/json
+
+{
+  "name": "My Company",
+  "location": "Cairo, Egypt",
+  "employeeCount": 150,
+  "commercialId": "base64encodedstring"
+}
+
+# Create Department
+POST http://localhost:3000/department
+Authorization: Bearer your_admin_token
+Content-Type: application/json
+
+{
+  "name": "HR",
+  "companyId": 1
+}
+
+# Create User (Admin / Recruiter / Candidate)
+POST http://localhost:3000/user
+Authorization: Bearer your_admin_token
+Content-Type: application/json
+
+{
+  "fullName": "Recruiter 1",
+  "email": "recruiter@example.com",
+  "password": "password123",
+  "roleIds": [2],  # 1=admin, 2=recruitment_user, 3=candidate_user
+  "companyId": 1,
+  "departmentId": 1,
+  "userImg": "base64encodedimage"
+}
+
+# Get all Users
+GET http://localhost:3000/user
+Authorization: Bearer your_admin_token
+
+---
+
+### ==========================
+### RECRUITMENT MODULE
+### ==========================
+
+# Create Opportunity (Recruiter)
+POST http://localhost:3000/opportunities
+Authorization: Bearer your_recruiter_token
+Content-Type: application/json
+
+{
+  "title": "Backend Developer",
+  "description": "Work with NestJS and TypeORM",
+  "jobType": "full-time",
+  "salaryRange": "5000-8000",
+  "departmentId": 1,
+  "publishScope": "external"
+}
+
+# Get all Opportunities
+GET http://localhost:3000/opportunities
+Authorization: Bearer your_recruiter_token
+
+# Get Opportunity by ID
+GET http://localhost:3000/opportunities/1
+Authorization: Bearer your_recruiter_token
+
+---
+
+### ==========================
+### CANDIDATE PROFILE
+### ==========================
+
+# Create Candidate Profile
+POST http://localhost:3000/profiles
+Authorization: Bearer your_candidate_token
+Content-Type: application/json
+
+{
+  "fullName": "Candidate 1",
+  "summary": "Experienced developer",
+  "skills": ["NestJS", "TypeORM", "PostgreSQL"],
+  "experience": "3 years",
+  "education": "BSc Computer Science",
+  "cvFile": "base64encodedCV",
+  "linkedinUrl": "https://linkedin.com/in/candidate1"
+}
+
+# Get Candidate Profile (Own only)
+GET http://localhost:3000/profiles
+Authorization: Bearer your_candidate_token
+
+# Update Candidate Profile
+PUT http://localhost:3000/profiles/1
+Authorization: Bearer your_candidate_token
+Content-Type: application/json
+
+{
+  "summary": "Updated summary",
+  "skills": ["NestJS", "TypeORM", "PostgreSQL", "Docker"]
+}
+
+# Delete Candidate Profile
+DELETE http://localhost:3000/profiles/1
+Authorization: Bearer your_candidate_token
+
+---
+
+### ==========================
+### APPLICATIONS
+### ==========================
+
+# Apply to Opportunity (Single)
+POST http://localhost:3000/applications/apply
+Authorization: Bearer your_candidate_token
+Content-Type: application/json
+
+{
+  "opportunityId": 1
+}
+
+# Apply to Multiple Opportunities
+POST http://localhost:3000/applications/apply-multiple
+Authorization: Bearer your_candidate_token
+Content-Type: application/json
+
+{
+  "opportunityIds": [1, 2, 3]
+}
+
+# Get all Applications (Candidate)
+GET http://localhost:3000/applications
+Authorization: Bearer your_candidate_token

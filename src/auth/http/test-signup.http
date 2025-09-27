@@ -1,0 +1,23 @@
+### Test Sign Up with Token Response
+POST http://localhost:4002/auth/sign-up
+Content-Type: application/json
+
+{
+  "userName": "John Doe",
+  "email": "john.doe@example.com",
+  "password": "Password123!"
+}
+
+### Expected Response:
+### {
+###   "message": "User created successfully",
+###   "user": {
+###     "id": 1,
+###     "email": "john.doe@example.com",
+###     "userName": "John Doe",
+###     "roles": ["candidate_user"],
+###     "companyId": null
+###   },
+###   "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+###   "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+### }

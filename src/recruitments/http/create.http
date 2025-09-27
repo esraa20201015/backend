@@ -1,0 +1,105 @@
+
+# Candidate creates a new profile (with CV in Base64)
+POST http://localhost:4002/profiles
+Content-Type: application/json
+
+{
+  "personalSummary": "Full-stack developer with NestJS & React experience",
+  "skills": "NestJS, React, PostgreSQL, TypeScript",
+  "experience": "3 years in backend and frontend development",
+  "education": "B.Sc. Computer Science",
+  "cvFile": "U29tZUJhc2U2NEVuY29kZWRTdHJpbmc=",
+  "linkedinUrl": "https://www.linkedin.com/in/esraakamel"
+}
+
+############################################################
+# Get all profiles
+GET http://localhost:4002/profiles
+
+############################################################
+# Get one profile by ID
+GET http://localhost:4002/profiles/1
+
+############################################################
+# Update profile
+PUT http://localhost:4002/profiles/1
+Content-Type: application/json
+
+{
+  "personalSummary": "Updated summary for NestJS & React dev",
+  "skills": "NestJS, React, PostgreSQL, TypeScript, Docker",
+  "experience": "4 years in backend and frontend development",
+  "education": "B.Sc. Computer Science",
+  "cvFile": "VXBkYXRlZEJhc2U2NEVuY29kZWRTdHJpbmc=",
+  "linkedinUrl": "https://www.linkedin.com/in/esraakamel-updated"
+}
+
+############################################################
+# Delete profile
+DELETE http://localhost:4002/profiles/1
+
+############################################################
+# OPPORTUNITIES
+# Recruiter creates a job opportunity
+POST http://localhost:4002/opportunities
+Content-Type: application/json
+
+{
+  "title": "Backend Developer",
+  "description": "Responsible for NestJS backend development",
+  "jobType": "full-time",
+  "salaryRange": "4000-6000",
+  "departmentId": 1,
+  "publishScope": "external"
+}
+
+############################################################
+# Get all opportunities
+GET http://localhost:4002/opportunities
+
+############################################################
+# Get one opportunity by ID
+GET http://localhost:4002/opportunities/1
+
+############################################################
+# Update opportunity
+PUT http://localhost:4002/opportunities/1
+Content-Type: application/json
+
+{
+  "title": "Backend Developer Updated",
+  "description": "Responsible for NestJS and PostgreSQL development",
+  "jobType": "full-time",
+  "salaryRange": "5000-7000",
+  "departmentId": 1,
+  "publishScope": "internal"
+}
+
+############################################################
+# Delete opportunity
+DELETE http://localhost:4002/opportunities/1
+
+############################################################
+# APPLICATIONS
+# Candidate applies to a single opportunity
+POST http://localhost:4002/applications/apply
+Content-Type: application/json
+
+{
+  "profileId": 1,
+  "opportunityId": 1
+}
+
+############################################################
+# Candidate applies to multiple opportunities (transaction)
+POST http://localhost:4002/applications/apply-multiple
+Content-Type: application/json
+
+{
+  "profileId": 1,
+  "opportunityIds": [1, 2, 3]
+}
+
+############################################################
+# Get all applications
+GET http://localhost:4002/applications
