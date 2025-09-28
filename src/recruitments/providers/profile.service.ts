@@ -44,6 +44,12 @@ export class ProfileService {
     return this.profileRepository.find({ relations: ['applications'] });
   }
 
+  /**
+   * Find a profile by its numeric ID
+   * @param id - Profile ID (number)
+   * @returns The found Profile entity
+   * @throws NotFoundException if profile is not found
+   */
   async findOne(id: number): Promise<Profile> {
     const profile = await this.profileRepository.findOne({
       where: { id },

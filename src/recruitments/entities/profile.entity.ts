@@ -1,11 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { Application } from './application.entity';
+import { BaseRecruitmentEntityFields } from './base.entity';
+import { User } from '../../admins/entities/user.entity';
 
-@Entity('profiles')
-export class Profile {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+@Entity( 'profiles')
+export class Profile extends BaseRecruitmentEntityFields {
   @Column({ length: 255 })
   personalSummary: string;
 
@@ -25,7 +24,13 @@ export class Profile {
   @Column({ nullable: true })
   linkedinUrl?: string;
 
+  @Column({nullable: true})
+  userId: number;
+
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId' })
+  user: User;
+
   @OneToMany(() => Application, (application) => application.profile)
   applications: Application[];
-  userId: any;
 }

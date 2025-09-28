@@ -1,193 +1,468 @@
-### AUTHENTICATION
-# Sign Up a New User
-POST http://localhost:4002/auth/sign-up
+### Variables for Postman
+@baseUrl = http://localhost:4002
+@adminEmail = admin@talent.com
+@recruiterEmail = recruiter@company.com
+@candidateEmail = candidate@email.com
+@password = Password123!
+
+### ===========================================
+### AUTHENTICATION FLOW - STREAMLINED ROLES
+### ===========================================
+### Available Roles: admin, recruitment_user, candidate_user
+
+### 1. Admin Sign Up
+POST {{baseUrl}}/auth/sign-up
 Content-Type: application/json
 
 {
-  "fullName": "John Doe",
-  "email": "john.doe@example.com",
-  "password": "Password123!"
+  "userName": "Admin User",
+  "email": "{{adminEmail}}",
+  "password": "{{password}}",
+  "role": "admin"
 }
 
-
-
-
-# Sign in (Admin / Recruiter / Candidate)
-POST http://localhost:4002/auth/sign-in
+### 2. Admin Sign In
+POST {{baseUrl}}/auth/sign-in
 Content-Type: application/json
 
 {
-    "email": "john.doe@example.com",
-  "password": "Password123!"
-  
-}
-GET http://localhost:4002/user
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE2LCJlbWFpbCI6ImpvaG4uZG9lQGV4YW1wbGUuY29tIiwiaWF0IjoxNzU3MzMyNTUzLCJleHAiOjE3NTczMzYxNTMsImF1ZCI6ImxvY2FsaG9zdDo0MDAyIiwiaXNzIjoibG9jYWxob3N0OjQwMDIifQ.-1YcwLoCTHCUQepot5xsh92EPywQaxboUQ8GRGjzNko
-
-
-# Refresh token
-POST http://localhost:4002/auth/refresh
-Content-Type: application/json
-
-{
-  "refreshToken": "your_refresh_token_here"
+  "email": "{{adminEmail}}",
+  "password": "{{password}}"
 }
 
-# Logout
-POST http://localhost:4002/auth/sign-out
-Authorization: Bearer your_access_token_here
-
----
-
-### ==========================
-### ADMIN MODULE
-### ==========================
-
-# Create Category
-POST http://localhost:4002/category
-Authorization: Bearer your_admin_token
+### 3. Recruitment User Sign Up
+POST {{baseUrl}}/auth/sign-up
 Content-Type: application/json
 
 {
-  "name": "Organization Type"
+  "userName": "Recruitment User",
+  "email": "{{recruiterEmail}}",
+  "password": "{{password}}",
+  "role": "recruitment_user"
 }
 
-# Get all Categories
-GET http://localhost:3000/category
-Authorization: Bearer your_admin_token
-
-# Create Company
-POST http://localhost:3000/company
-Authorization: Bearer your_admin_token
+### 4. Recruitment User Sign In
+POST {{baseUrl}}/auth/sign-in
 Content-Type: application/json
 
 {
-  "name": "My Company",
-  "location": "Cairo, Egypt",
-  "employeeCount": 150,
-  "commercialId": "base64encodedstring"
+  "email": "{{recruiterEmail}}",
+  "password": "{{password}}"
 }
 
-# Create Department
-POST http://localhost:3000/department
-Authorization: Bearer your_admin_token
+### 5. Candidate User Sign Up
+POST {{baseUrl}}/auth/sign-up
 Content-Type: application/json
 
 {
-  "name": "HR",
+  "userName": "Candidate User",
+  "email": "{{candidateEmail}}",
+  "password": "{{password}}",
+  "role": "candidate_user"
+}
+
+### 6. Candidate User Sign In
+POST {{baseUrl}}/auth/sign-in
+Content-Type: application/json
+
+{
+  "email": "{{candidateEmail}}",
+  "password": "{{password}}"
+}
+
+### ===========================================
+### TOKEN MANAGEMENT
+### ===========================================
+
+### 7. Refresh Token
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+### 8. Logout
+POST {{baseUrl}}/auth/sign-out
+Authorization: Bearer {{accessToken}}
+
+### ===========================================
+### ADMIN MODULE TESTING (Admin Only)
+### ===========================================
+
+### Create Category
+POST {{baseUrl}}/category
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Technology",
+  "description": "Technology companies"
+}
+
+### Get All Categories
+GET {{baseUrl}}/category
+Authorization: Bearer {{adminToken}}
+
+### Get Category by ID
+GET {{baseUrl}}/category/1
+Authorization: Bearer {{adminToken}}
+
+### Update Category
+PUT {{baseUrl}}/category/1
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Updated Technology",
+  "description": "Updated description"
+}
+
+### Delete Category
+DELETE {{baseUrl}}/category/1
+Authorization: Bearer {{adminToken}}
+
+### ===========================================
+### COMPANY MANAGEMENT (Admin Only)
+### ===========================================
+
+### Create Company
+POST {{baseUrl}}/company
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "TechCorp Solutions",
+  "location": "San Francisco, CA",
+  "employeeCount": 500,
+  "commercialId": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+  "categoryId": 1
+}
+
+### Get All Companies
+GET {{baseUrl}}/company
+Authorization: Bearer {{adminToken}}
+
+### Get Company by ID
+GET {{baseUrl}}/company/1
+Authorization: Bearer {{adminToken}}
+
+### Update Company
+PUT {{baseUrl}}/company/1
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Updated TechCorp",
+  "location": "New York, NY",
+  "employeeCount": 750
+}
+
+### Delete Company
+DELETE {{baseUrl}}/company/1
+Authorization: Bearer {{adminToken}}
+
+### ===========================================
+### DEPARTMENT MANAGEMENT (Admin Only)
+### ===========================================
+
+### Create Department
+POST {{baseUrl}}/department
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Engineering",
+  "description": "Software Engineering Department",
   "companyId": 1
 }
 
-# Create User (Admin / Recruiter / Candidate)
-POST http://localhost:3000/user
-Authorization: Bearer your_admin_token
+### Get All Departments
+GET {{baseUrl}}/department
+Authorization: Bearer {{adminToken}}
+
+### Get Department by ID
+GET {{baseUrl}}/department/1
+Authorization: Bearer {{adminToken}}
+
+### Delete Department
+DELETE {{baseUrl}}/department/1
+Authorization: Bearer {{adminToken}}
+
+### ===========================================
+### ROLE MANAGEMENT (Admin Only)
+### ===========================================
+
+### Create Role
+POST {{baseUrl}}/role
+Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
 {
-  "fullName": "Recruiter 1",
-  "email": "recruiter@example.com",
-  "password": "password123",
-  "roleIds": [2],  # 1=admin, 2=recruitment_user, 3=candidate_user
+  "name": "Senior Recruiter",
+  "description": "Senior recruitment specialist"
+}
+
+### Get All Roles
+GET {{baseUrl}}/role
+Authorization: Bearer {{adminToken}}
+
+### Get Role by ID
+GET {{baseUrl}}/role/1
+Authorization: Bearer {{adminToken}}
+
+### Update Role
+PUT {{baseUrl}}/role/1
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Lead Recruiter",
+  "description": "Lead recruitment specialist"
+}
+
+### Delete Role
+DELETE {{baseUrl}}/role/1
+Authorization: Bearer {{adminToken}}
+
+### ===========================================
+### USER MANAGEMENT (Admin Only)
+### ===========================================
+
+### Create User
+POST {{baseUrl}}/user
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "fullName": "HR Manager",
+  "email": "hr@techcorp.com",
+  "password": "Password123!",
+  "roleIds": [2],
   "companyId": 1,
   "departmentId": 1,
-  "userImg": "base64encodedimage"
+  "userImg": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
 }
 
-# Get all Users
-GET http://localhost:3000/user
-Authorization: Bearer your_admin_token
+### Get All Users
+GET {{baseUrl}}/user
+Authorization: Bearer {{adminToken}}
 
----
+### Get User by ID
+GET {{baseUrl}}/user/1
+Authorization: Bearer {{adminToken}}
 
-### ==========================
-### RECRUITMENT MODULE
-### ==========================
-
-# Create Opportunity (Recruiter)
-POST http://localhost:3000/opportunities
-Authorization: Bearer your_recruiter_token
+### Update User
+PUT {{baseUrl}}/user/1
+Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
 {
-  "title": "Backend Developer",
-  "description": "Work with NestJS and TypeORM",
+  "fullName": "Updated HR Manager",
+  "email": "updated.hr@techcorp.com"
+}
+
+### Delete User
+DELETE {{baseUrl}}/user/1
+Authorization: Bearer {{adminToken}}
+
+### ===========================================
+### RECRUITMENT MODULE TESTING
+### ===========================================
+
+### Create Job Opportunity (Recruitment User)
+POST {{baseUrl}}/opportunities
+Authorization: Bearer {{recruiterToken}}
+Content-Type: application/json
+
+{
+  "title": "Senior Full Stack Developer",
+  "description": "We are looking for an experienced full-stack developer to join our team.",
   "jobType": "full-time",
-  "salaryRange": "5000-8000",
+  "salaryRange": "$80,000 - $120,000",
   "departmentId": 1,
-  "publishScope": "external"
+  "publishScope": "external",
+  "requirements": [
+    "5+ years experience with React and Node.js",
+    "Experience with TypeScript",
+    "Knowledge of PostgreSQL",
+    "Strong problem-solving skills"
+  ],
+  "benefits": [
+    "Health insurance",
+    "401k matching",
+    "Flexible work hours",
+    "Remote work options"
+  ]
 }
 
-# Get all Opportunities
-GET http://localhost:3000/opportunities
-Authorization: Bearer your_recruiter_token
+### Get All Opportunities
+GET {{baseUrl}}/opportunities
+Authorization: Bearer {{recruiterToken}}
 
-# Get Opportunity by ID
-GET http://localhost:3000/opportunities/1
-Authorization: Bearer your_recruiter_token
+### Get Opportunity by ID
+GET {{baseUrl}}/opportunities/1
+Authorization: Bearer {{recruiterToken}}
 
----
-
-### ==========================
-### CANDIDATE PROFILE
-### ==========================
-
-# Create Candidate Profile
-POST http://localhost:3000/profiles
-Authorization: Bearer your_candidate_token
+### Update Opportunity
+PUT {{baseUrl}}/opportunities/1
+Authorization: Bearer {{recruiterToken}}
 Content-Type: application/json
 
 {
-  "fullName": "Candidate 1",
-  "summary": "Experienced developer",
-  "skills": ["NestJS", "TypeORM", "PostgreSQL"],
-  "experience": "3 years",
-  "education": "BSc Computer Science",
-  "cvFile": "base64encodedCV",
-  "linkedinUrl": "https://linkedin.com/in/candidate1"
+  "title": "Lead Full Stack Developer",
+  "salaryRange": "$90,000 - $130,000"
 }
 
-# Get Candidate Profile (Own only)
-GET http://localhost:3000/profiles
-Authorization: Bearer your_candidate_token
+### Delete Opportunity
+DELETE {{baseUrl}}/opportunities/1
+Authorization: Bearer {{recruiterToken}}
 
-# Update Candidate Profile
-PUT http://localhost:3000/profiles/1
-Authorization: Bearer your_candidate_token
+### ===========================================
+### CANDIDATE PROFILE TESTING
+### ===========================================
+
+### Create Candidate Profile (Candidate User)
+POST {{baseUrl}}/profiles
+Authorization: Bearer {{candidateToken}}
 Content-Type: application/json
 
 {
-  "summary": "Updated summary",
-  "skills": ["NestJS", "TypeORM", "PostgreSQL", "Docker"]
+  "personalSummary": "Experienced software developer with 5+ years in full-stack development.",
+  "skills": [
+    "JavaScript",
+    "TypeScript",
+    "React",
+    "Node.js",
+    "PostgreSQL",
+    "MongoDB"
+  ],
+  "experience": [
+    {
+      "company": "Previous Company",
+      "position": "Senior Developer",
+      "duration": "2020-2024",
+      "description": "Led development of multiple web applications"
+    }
+  ],
+  "education": [
+    {
+      "institution": "University of Technology",
+      "degree": "Bachelor of Computer Science",
+      "year": "2019"
+    }
+  ],
+  "cvFile": "data:application/pdf;base64,JVBERi0xLjQKJcfsj6IKNSAwIG9iago8PAovVHlwZSAvUGFnZQovUGFyZW50IDMgMCBSCi9NZWRpYUJveCBbMCAwIDU5NSA4NDJdCi9SZXNvdXJjZXMgPDwKL0ZvbnQgPDwKL0YxIDIgMCBSCj4+Cj4+Ci9Db250ZW50cyA0IDAgUgo+PgoKZW5kb2JqCjQgMCBvYmoKPDwKL0xlbmd0aCA0NQo+PgpzdHJlYW0KQlQKL0YxIDEyIFRmCjcyIDcyMCBUZAooSGVsbG8gV29ybGQpIFRqCkVUCmVuZHN0cmVhbQplbmRvYmoKMiAwIG9iago8PAovVHlwZSAvRm9udAovU3VidHlwZSAvVHlwZTEKL0Jhc2VGb250IC9IZWx2ZXRpY2EKPj4KZW5kb2JqCjMgMCBvYmoKPDwKL1R5cGUgL1BhZ2VzCi9LaWRzIFs0IDAgUl0KL0NvdW50IDEKPj4KZW5kb2JqCjEgMCBvYmoKPDwKL1R5cGUgL0NhdGFsb2cKL1BhZ2VzIDMgMCBSCj4+CmVuZG9iagp4cmVmCjAgNgowMDAwMDAwMDAwIDY1NTM1IGYKMDAwMDAwMDAwOSAwMDAwMCBuCjAwMDAwMDAwNTggMDAwMDAgbgowMDAwMDAwMTE1IDAwMDAwIG4KMDAwMDAwMDI2OSAwMDAwMCBuCjAwMDAwMDAzNDcgMDAwMDAgbgp0cmFpbGVyCjw8Ci9TaXplIDYKL1Jvb3QgMSAwIFIKPj4Kc3RhcnR4cmVmCjQzNwolJUVPRgo=",
+  "linkedinUrl": "https://linkedin.com/in/candidate"
 }
 
-# Delete Candidate Profile
-DELETE http://localhost:3000/profiles/1
-Authorization: Bearer your_candidate_token
+### Get Candidate Profile
+GET {{baseUrl}}/profiles
+Authorization: Bearer {{candidateToken}}
 
----
+### Get Own Profile
+GET {{baseUrl}}/profiles/own
+Authorization: Bearer {{candidateToken}}
 
-### ==========================
-### APPLICATIONS
-### ==========================
-
-# Apply to Opportunity (Single)
-POST http://localhost:3000/applications/apply
-Authorization: Bearer your_candidate_token
+### Update Candidate Profile
+PUT {{baseUrl}}/profiles/1
+Authorization: Bearer {{candidateToken}}
 Content-Type: application/json
 
 {
-  "opportunityId": 1
+  "personalSummary": "Updated summary with more experience",
+  "skills": [
+    "JavaScript",
+    "TypeScript",
+    "React",
+    "Node.js",
+    "PostgreSQL",
+    "MongoDB",
+    "Docker",
+    "AWS"
+  ]
 }
 
-# Apply to Multiple Opportunities
-POST http://localhost:3000/applications/apply-multiple
-Authorization: Bearer your_candidate_token
+### Delete Candidate Profile
+DELETE {{baseUrl}}/profiles/1
+Authorization: Bearer {{candidateToken}}
+
+### ===========================================
+### APPLICATION TESTING
+### ===========================================
+
+### Apply to Opportunity (Single)
+POST {{baseUrl}}/applications/apply
+Authorization: Bearer {{candidateToken}}
 Content-Type: application/json
 
 {
-  "opportunityIds": [1, 2, 3]
+  "profileId": 1,
+  "opportunityId": 1,
+  "coverLetter": "I am very interested in this position and believe my skills align perfectly with your requirements."
 }
 
-# Get all Applications (Candidate)
-GET http://localhost:3000/applications
-Authorization: Bearer your_candidate_token
+### Apply to Multiple Opportunities
+POST {{baseUrl}}/applications/apply-multiple
+Authorization: Bearer {{candidateToken}}
+Content-Type: application/json
+
+{
+  "profileId": 1,
+  "opportunityIds": [1, 2, 3],
+  "coverLetter": "I am applying to multiple positions that match my skills and interests."
+}
+
+### Get Candidate Applications
+GET {{baseUrl}}/applications
+Authorization: Bearer {{candidateToken}}
+
+### Get Application by ID
+GET {{baseUrl}}/applications/1
+Authorization: Bearer {{candidateToken}}
+
+### Update Application
+PUT {{baseUrl}}/applications/1
+Authorization: Bearer {{candidateToken}}
+Content-Type: application/json
+
+{
+  "applicationStatus": "withdrawn",
+  "coverLetter": "Updated cover letter"
+}
+
+### Delete Application
+DELETE {{baseUrl}}/applications/1
+Authorization: Bearer {{candidateToken}}
+
+### ===========================================
+### POSTMAN COLLECTION VARIABLES
+### ===========================================
+
+### Set these variables in Postman:
+### baseUrl: http://localhost:4002
+### adminToken: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+### recruiterToken: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+### candidateToken: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+### accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+### refreshToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+### ===========================================
+### ROLE PERMISSIONS SUMMARY
+### ===========================================
+
+### ADMIN ROLE:
+### - Full access to all admin endpoints (category, company, department, user, role)
+### - Can manage all users and system settings
+### - Can view all recruitment data
+
+### RECRUITMENT_USER ROLE:
+### - Can create, read, update, delete opportunities
+### - Can manage applications
+### - Cannot access admin functions
+
+### CANDIDATE_USER ROLE:
+### - Can create and manage own profile
+### - Can apply to opportunities
+### - Can view own applications
+### - Cannot access admin or recruitment management functions

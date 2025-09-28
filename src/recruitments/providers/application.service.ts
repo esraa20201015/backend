@@ -5,6 +5,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
@@ -35,18 +36,22 @@ export class ApplicationService {
     const profile = await this.profileRepository.findOne({
       where: { id: dto.profileId },
     });
-    if (!profile) throw new NotFoundException('Profile not found');
+    if (!profile) {
+      throw new NotFoundException('Profile not found');
+    }
 
     const opportunity = await this.opportunityRepository.findOne({
       where: { id: dto.opportunityId },
     });
-    if (!opportunity) throw new NotFoundException('Opportunity not found');
+    if (!opportunity) {
+      throw new NotFoundException('Opportunity not found');
+    }
 
     return this.dataSource.transaction(async (manager) => {
       const exists = await manager.findOne(Application, {
         where: {
-          profile: { id: dto.profileId },
-          opportunity: { id: dto.opportunityId },
+          profile: { id: profile.id },
+          opportunity: { id: opportunity.id },
         },
       });
       if (exists)
@@ -55,7 +60,7 @@ export class ApplicationService {
       const application = manager.create(Application, {
         profile,
         opportunity,
-        status: 'pending',
+        applicationStatus: 'pending', // ✅ Fixed: use applicationStatus instead of status
       });
       return await manager.save(application);
     });
@@ -96,7 +101,7 @@ export class ApplicationService {
           const app = manager.create(Application, {
             profile,
             opportunity,
-            status: 'pending',
+            applicationStatus: 'pending', // ✅ Fixed: use applicationStatus instead of status
           });
           createdApplications.push(await manager.save(app));
         }
@@ -110,5 +115,61 @@ export class ApplicationService {
     return this.applicationRepository.find({
       relations: ['profile', 'opportunity'],
     });
+  }
+
+  async update(id: number, dto: any, userId: number): Promise<Application> {
+    try {
+      const application = await this.applicationRepository.findOne({
+        where: { id },
+        relations: ['profile', 'opportunity'],
+      });
+
+      if (!application) {
+        throw new NotFoundException(`Application with id ${id} not found`);
+      }
+
+      // Ensure user can only update their own applications
+      if (application.profile.userId !== userId) {
+        throw new NotFoundException(`Application not found`);
+      }
+
+      Object.assign(application, dto);
+      return await this.applicationRepository.save(application);
+    } catch (error) {
+      console.error('Error updating application:', error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to update application');
+    }
+  }
+
+  async remove(id: number, userId: number): Promise<void> {
+    try {
+      const application = await this.applicationRepository.findOne({
+        where: { id },
+        relations: ['profile'],
+      });
+
+      if (!application) {
+        throw new NotFoundException(`Application with id ${id} not found`);
+      }
+
+      // Ensure user can only delete their own applications
+      if (application.profile.userId !== userId) {
+        throw new NotFoundException(`Application not found`);
+      }
+
+      const result = await this.applicationRepository.delete(id);
+      if (result.affected === 0) {
+        throw new NotFoundException(`Application with id ${id} not found`);
+      }
+    } catch (error) {
+      console.error('Error deleting application:', error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to delete application');
+    }
   }
 }

@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Opportunity } from '../entities/opportunity.entity';
 import { CreateOpportunityDto } from '../dto/opportunity.dto/create.opportunity.dto';
+import { UpdateOpportunityDto } from '../dto/opportunity.dto/update.opporunity.dto';
 
 @Injectable()
 export class OpportunityService {
@@ -37,5 +38,34 @@ export class OpportunityService {
     if (!opportunity)
       throw new NotFoundException(`Opportunity with id ${id} not found`);
     return opportunity;
+  }
+
+  async update(id: number, dto: UpdateOpportunityDto): Promise<Opportunity> {
+    try {
+      const opportunity = await this.findOne(id);
+      Object.assign(opportunity, dto);
+      return await this.opportunityRepository.save(opportunity);
+    } catch (error) {
+      console.error('Error updating opportunity:', error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to update opportunity');
+    }
+  }
+
+  async remove(id: number): Promise<void> {
+    try {
+      const result = await this.opportunityRepository.delete(id);
+      if (result.affected === 0) {
+        throw new NotFoundException(`Opportunity with id ${id} not found`);
+      }
+    } catch (error) {
+      console.error('Error deleting opportunity:', error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to delete opportunity');
+    }
   }
 }

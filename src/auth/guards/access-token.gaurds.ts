@@ -38,7 +38,20 @@ import {
           audience: this.jwtConf.audience,
           issuer: this.jwtConf.issuer,
         });
-        request['user'] = payload; // attach user info to request
+        
+        // Enhanced user context for scoped access
+        request['user'] = {
+          ...payload,
+          // Add request context for scoped access
+          requestContext: {
+            userId: payload.userId,
+            companyId: payload.companyId,
+            departmentId: payload.departmentId,
+            roles: payload.roles,
+            permissions: payload.permissions,
+          }
+        };
+        
         return true;
       } catch {
         throw new UnauthorizedException('Invalid or expired token');

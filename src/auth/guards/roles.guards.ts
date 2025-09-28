@@ -18,20 +18,56 @@ export class RolesGuard implements CanActivate {
       'roles',
       context.getHandler(),
     );
-    if (!requiredRoles) return true;
+    
+    const requiredPermissions = this.reflector.get<string[]>(
+      'permissions',
+      context.getHandler(),
+    );
+
+    // If no roles or permissions required, allow access
+    if (!requiredRoles && !requiredPermissions) return true;
 
     const request = context.switchToHttp().getRequest();
     const user = request['user'];
-    if (!user || !Array.isArray(user.roles)) {
-      throw new ForbiddenException('User not authenticated or roles not found');
+    
+    if (!user) {
+      throw new ForbiddenException('User not authenticated');
     }
 
-    const hasRole = user.roles.some((role: string) =>
-      requiredRoles.includes(role),
-    );
-    if (!hasRole) {
-      throw new ForbiddenException('Insufficient permissions');
+    // Check roles
+    if (requiredRoles && requiredRoles.length > 0) {
+      if (!Array.isArray(user.roles) || user.roles.length === 0) {
+        throw new ForbiddenException('User roles not found');
+      }
+
+      const hasRequiredRole = user.roles.some((role: string) =>
+        requiredRoles.includes(role),
+      );
+      
+      if (!hasRequiredRole) {
+        throw new ForbiddenException(
+          `Insufficient role. Required: ${requiredRoles.join(', ')}. User has: ${user.roles.join(', ')}`
+        );
+      }
     }
+
+    // Check permissions
+    if (requiredPermissions && requiredPermissions.length > 0) {
+      if (!Array.isArray(user.permissions) || user.permissions.length === 0) {
+        throw new ForbiddenException('User permissions not found');
+      }
+
+      const hasRequiredPermission = requiredPermissions.some((permission: string) =>
+        user.permissions.includes(permission),
+      );
+      
+      if (!hasRequiredPermission) {
+        throw new ForbiddenException(
+          `Insufficient permission. Required: ${requiredPermissions.join(', ')}. User has: ${user.permissions.join(', ')}`
+        );
+      }
+    }
+
     return true;
   }
 }

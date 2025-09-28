@@ -1,12 +1,10 @@
 // src/recruitments/entities/opportunity.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, Column, OneToMany } from 'typeorm';
 import { Application } from './application.entity';
+import { BaseRecruitmentEntityFields } from './base.entity';
 
-@Entity('opportunities')
-export class Opportunity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+@Entity( 'opportunities')
+export class Opportunity extends BaseRecruitmentEntityFields {
   @Column({ length: 150 })
   title: string;
 

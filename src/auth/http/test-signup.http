@@ -1,23 +1,130 @@
-### Test Sign Up with Token Response
-POST http://localhost:4002/auth/sign-up
+### Variables for Postman
+@baseUrl = http://localhost:4002
+@adminEmail = admin@talent.com
+@recruiterEmail = recruiter@company.com
+@candidateEmail = candidate@email.com
+@password = Password123!
+
+### ===========================================
+### AUTHENTICATION TESTING - STREAMLINED ROLES
+### ===========================================
+### Available Roles: admin, recruitment_user, candidate_user
+
+### 1. Admin Sign Up
+POST {{baseUrl}}/auth/sign-up
 Content-Type: application/json
 
 {
-  "userName": "John Doe",
-  "email": "john.doe@example.com",
-  "password": "Password123!"
+  "userName": "Admin User",
+  "email": "{{adminEmail}}",
+  "password": "{{password}}",
+  "role": "admin"
 }
 
-### Expected Response:
+### 2. Recruitment User Sign Up
+POST {{baseUrl}}/auth/sign-up
+Content-Type: application/json
+
+{
+  "userName": "Recruitment User",
+  "email": "{{recruiterEmail}}",
+  "password": "{{password}}",
+  "role": "recruitment_user"
+}
+
+### 3. Candidate User Sign Up
+POST {{baseUrl}}/auth/sign-up
+Content-Type: application/json
+
+{
+  "userName": "Candidate User",
+  "email": "{{candidateEmail}}",
+  "password": "{{password}}",
+  "role": "candidate_user"
+}
+
+### ===========================================
+### SIGN IN TESTING
+### ===========================================
+
+### 4. Admin Sign In
+POST {{baseUrl}}/auth/sign-in
+Content-Type: application/json
+
+{
+  "email": "{{adminEmail}}",
+  "password": "{{password}}"
+}
+
+### 5. Recruitment User Sign In
+POST {{baseUrl}}/auth/sign-in
+Content-Type: application/json
+
+{
+  "email": "{{recruiterEmail}}",
+  "password": "{{password}}"
+}
+
+### 6. Candidate User Sign In
+POST {{baseUrl}}/auth/sign-in
+Content-Type: application/json
+
+{
+  "email": "{{candidateEmail}}",
+  "password": "{{password}}"
+}
+
+### ===========================================
+### TOKEN MANAGEMENT
+### ===========================================
+
+### 7. Refresh Token
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+### 8. Logout
+POST {{baseUrl}}/auth/sign-out
+Authorization: Bearer {{accessToken}}
+
+### ===========================================
+### EXPECTED RESPONSES
+### ===========================================
+
+### Sign Up Response:
 ### {
 ###   "message": "User created successfully",
 ###   "user": {
-###     "id": 1,
-###     "email": "john.doe@example.com",
-###     "userName": "John Doe",
-###     "roles": ["candidate_user"],
-###     "companyId": null
+###     "userId": "1",
+###     "avatar": "",
+###     "userName": "Admin User",
+###     "email": "admin@talent.com",
+###     "authority": ["admin"]
 ###   },
 ###   "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
 ###   "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ### }
+
+### Sign In Response:
+### {
+###   "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+###   "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+###   "user": {
+###     "userId": "1",
+###     "avatar": "",
+###     "userName": "Admin User",
+###     "email": "admin@talent.com",
+###     "authority": ["admin"]
+###   }
+### }
+
+### ===========================================
+### POSTMAN SETUP INSTRUCTIONS
+### ===========================================
+### 1. Copy the accessToken from sign-in response
+### 2. Set Postman variable: accessToken = your_token_here
+### 3. Set Postman variable: refreshToken = your_refresh_token_here
+### 4. Use {{accessToken}} in Authorization headers for protected endpoints

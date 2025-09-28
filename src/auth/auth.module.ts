@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import { Module, forwardRef } from '@nestjs/common';
+import { Global, Module, forwardRef } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigType } from '@nestjs/config';
 import jwtConfig from './config/jwt.config';
@@ -13,10 +13,12 @@ import { BcryptProvider } from './providers/bcrypt.provider';
 import { JwtStrategy } from './strategies/jwt.service';
 import { AccessTokenGuard } from './guards/access-token.gaurds';
 import { RolesGuard } from './guards/roles.guards';
+import { ScopedAccessGuard } from './guards/scoped-access.guard';
 
 import { AuthController } from './auth.controller'; 
 import { AdminsModule } from '../admins/admins.module';
 
+@Global() // Add @Global() decorator
 @Module({
   imports: [
     forwardRef(() => AdminsModule),
@@ -37,6 +39,7 @@ import { AdminsModule } from '../admins/admins.module';
     JwtStrategy,
     AccessTokenGuard,
     RolesGuard,
+    ScopedAccessGuard,
     {
       provide: HashingProvider,
       useClass: BcryptProvider,
@@ -47,6 +50,7 @@ import { AdminsModule } from '../admins/admins.module';
     SignInProvider,
     AccessTokenGuard,
     RolesGuard,
+    ScopedAccessGuard,
     JwtModule,
   ],
 })

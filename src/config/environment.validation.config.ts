@@ -20,4 +20,7 @@ export default Joi.object({
   JWT_ACCESS_TOKEN_TTL: Joi.number().default(3600),
   JWT_REFRESH_SECRET: Joi.string().required(),
   JWT_REFRESH_TOKEN_TTL: Joi.number().default(604800),
+    // Auth
+    ENABLE_GLOBAL_AUTH: Joi.boolean().default(true),
+    DEFAULT_ROLES: Joi.string().default('candidate_user'),
 });

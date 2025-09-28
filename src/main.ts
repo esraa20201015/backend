@@ -4,14 +4,20 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as express from 'express';
 
 async function bootstrap() {
   console.log('Starting NestJS bootstrap...');
 
-  // Create the app
+  // Create the app with proper body size configuration
   let app;
   try {
     app = await NestFactory.create(AppModule);
+    
+    // Configure body parser for large file uploads (10MB limit)
+    app.use(express.json({ limit: '10mb' }));
+    app.use(express.urlencoded({ limit: '10mb', extended: true }));
+    
     console.log('Nest application created');
   } catch (err) {
     console.error(' Failed to create Nest application:', err);

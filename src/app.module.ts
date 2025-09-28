@@ -16,10 +16,16 @@ import { UserRole } from './admins/entities/user-role.entity';
 import { LookupMaster } from './admins/entities/lookup-master.entity';
 import { LookupDetail } from './admins/entities/lookup-detail.entity';
 
+// Recruitment entities
+import { Profile } from './recruitments/entities/profile.entity';
+import { Opportunity } from './recruitments/entities/opportunity.entity';
+import { Application } from './recruitments/entities/application.entity';
+
 // Configs
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 import jwtConfig from './auth/config/jwt.config';
+import authConfig from './auth/config/auth.config';
 import environmentValidationConfig from './config/environment.validation.config';
 
 const ENV = process.env.NODE_ENV;
@@ -29,7 +35,7 @@ const ENV = process.env.NODE_ENV;
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: !ENV ? '.env' : `.env.${ENV}`,
-      load: [appConfig, databaseConfig, jwtConfig], // Add jwtConfig here
+      load: [appConfig, databaseConfig, jwtConfig, authConfig],
       validationSchema: environmentValidationConfig,
     }),
 
@@ -44,6 +50,7 @@ const ENV = process.env.NODE_ENV;
         password: configService.get<string>('database.password'),
         database: configService.get<string>('database.name'),
         entities: [
+          // Admin entities
           Category,
           Company,
           Department,
@@ -53,8 +60,13 @@ const ENV = process.env.NODE_ENV;
           UserRole,
           LookupMaster,
           LookupDetail,
+          // Recruitment entities
+          Profile,
+          Opportunity,
+          Application,
         ],
         synchronize: true,
+        // logging: true,
         autoLoadEntities: true,
         ssl: { rejectUnauthorized: false },
       }),
